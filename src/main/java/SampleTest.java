@@ -96,12 +96,6 @@ public class SampleTest {
             Thread.sleep(1500);
 
             String res1 = "none";
-            String res2 = "none";
-            String res3 = "none";
-            String res4 = "none";
-            String res5 = "none";
-            String res6 = "none";
-            String res7 = "none";
 
             for (String[] elem : elems) {
                 if (isElementPresent(elem[0], elem[1])) {
@@ -114,13 +108,13 @@ public class SampleTest {
                     res1 = el15.getText().toLowerCase();
 
                     for (int i = 2; i < phrase.length; i++) {
-                        if (res1.contains(phrase[i]) || res2.contains(phrase[i]) || res3.contains(phrase[i]) || res4.contains(phrase[i]) || res5.contains(phrase[i]) || res6.contains(phrase[i]) || res7.contains(phrase[i])) {
+                        if (res1.contains(phrase[i]) ) {
                             ++pass_rate;
-                        } else if (res1.startsWith(phrase[i]) || res2.startsWith(phrase[i]) || res3.startsWith(phrase[i]) || res4.startsWith(phrase[i]) || res5.startsWith(phrase[i]) || res6.startsWith(phrase[i]) || res7.startsWith(phrase[i])) {
+                        } else if (res1.startsWith(phrase[i])) {
                             pass_rate += 2;
                         }
                     }
-                    if (phrase[0].toLowerCase().contains(res1) || phrase[0].toLowerCase().contains(res2) || phrase[0].toLowerCase().contains(res3.substring(0, res3.length() - 1)) || phrase[0].toLowerCase().contains(res4.substring(0, res4.length() - 1)) || phrase[0].toLowerCase().contains(res5.substring(0, res5.length() - 1)) || phrase[0].toLowerCase().contains(res6) || phrase[0].toLowerCase().contains(res7)) {
+                    if (phrase[0].toLowerCase().contains(res1)) {
                         pass_rate = phrase.length;
                     }
                 }
