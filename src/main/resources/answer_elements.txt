@@ -1,0 +1,8 @@
+id,com.google.socratic:id/youtube_title
+id,com.google.socratic:id/answer
+id,com.google.socratic:id/question
+id,com.google.socratic:id/google_subtitle
+id,com.google.socratic:id/google_title
+id,com.google.socratic:id/alertTitle
+id,com.google.socratic:id/explainers_result_title
+id,com.google.socratic:id/solution_view

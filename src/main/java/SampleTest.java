@@ -5,6 +5,7 @@ import io.appium.java_client.android.AndroidElement;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
@@ -22,12 +23,13 @@ public class SampleTest {
 
     private AndroidDriver<AndroidElement> driver;
     double pass_rate = 0.0;
+    private ArrayList<String[]> elems = new ArrayList<String[]>();
     String test_cases_csv_dir = "/Users/Mary/Documents/Fall22/CMPE187/Socratic/src/main/resources/test_cases.csv";
     String img_folder_dir = "/Users/Mary/Documents/Fall22/CMPE187/Socratic/src/main/resources/images";
     String output_file_csv_dir = "/Users/Mary/Documents/Fall22/CMPE187/Socratic/src/main/resources/output.csv"; //Auto create file if not there
 
     @Before
-    public void setUp() throws MalformedURLException {
+    public void setUp() throws MalformedURLException, FileNotFoundException {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         desiredCapabilities.setCapability("platformName", "Android");
         desiredCapabilities.setCapability("appium:platformVersion", "13");
@@ -44,9 +46,15 @@ public class SampleTest {
         URL remoteUrl = new URL("http://127.0.0.1:4723/wd/hub");
 
         driver = new AndroidDriver(remoteUrl, desiredCapabilities);
+
+        Scanner scanner = new Scanner(new File("/Users/Mary/Documents/Fall22/CMPE187/Socratic/src/main/resources/answer_elements.txt"));
+
+        while (scanner.hasNextLine()) {
+            String[] item = scanner.nextLine().split(",");
+            elems.add(item);
+        }
+        scanner.close();
     }
-
-
 
     @Test
     public void sampleTest() throws InterruptedException, FileNotFoundException {
@@ -54,7 +62,7 @@ public class SampleTest {
         ArrayList<String> list = new ArrayList<String>();
         HashMap<String, Integer> chapterPass = new HashMap<String, Integer>();
         HashMap<String, Integer> chapterCount = new HashMap<String, Integer>();
-        while (s.hasNextLine()){
+        while (s.hasNextLine()) {
             list.add(s.nextLine());
         }
         s.close();
@@ -68,12 +76,11 @@ public class SampleTest {
             String[] phrase = list.get(j).split(":");
             if (chapterCount.containsKey(phrase[1])) {
                 chapterCount.put(phrase[1], chapterCount.get(phrase[1]) + 1);
-            }
-            else {
+            } else {
                 chapterCount.put(phrase[1], 1);
             }
             Thread.sleep(1500);
-            if (!isElementPresent("id","com.google.socratic:id/text_query")) {
+            if (!isElementPresent("id", "com.google.socratic:id/text_query")) {
                 driver.launchApp();
                 Thread.sleep(1500);
                 MobileElement el13 = (MobileElement) driver.findElementByAccessibilityId("Type a question");
@@ -95,87 +102,58 @@ public class SampleTest {
             String res5 = "none";
             String res6 = "none";
             String res7 = "none";
-            if (isElementPresent("id","com.google.socratic:id/youtube_title")) {
-                MobileElement el5 = (MobileElement) driver.findElementById("com.google.socratic:id/youtube_title");
-                res1 = el5.getText().toLowerCase();
 
-            }
-            if (isElementPresent("id","com.google.socratic:id/answer")) {
-                MobileElement el6 = (MobileElement) driver.findElementById("com.google.socratic:id/answer");
-                res2 = el6.getText().toLowerCase();
-                MobileElement el10 = (MobileElement) driver.findElementById("com.google.socratic:id/question");
-                res5 = el10.getText().toLowerCase();
-                res5 = res5.substring(0,res5.length()-1);
-
-            }
-            if (isElementPresent("id","com.google.socratic:id/google_subtitle")) {
-                MobileElement el7 = (MobileElement) driver.findElementById("com.google.socratic:id/google_subtitle");
-                res3 = el7.getText().toLowerCase();
-                MobileElement el8 = (MobileElement) driver.findElementById("com.google.socratic:id/google_title");
-                res4 = el8.getText().toLowerCase();
-
-            }
-            if (isElementPresent("id","com.google.socratic:id/alertTitle")){
-                MobileElement el8 = (MobileElement) driver.findElementById("android:id/button1");
-                el8.click();
-                res1 = "FAIL";
-                res2 = "FAIL";
-                res3 = "FAIL";
-                res4 = "FAIL";
-                res5 = "FAIL";
-                res6 = "FAIL";
-                res7 = "FAIL";
-            }
-            if (isElementPresent("id","com.google.socratic:id/explainers_result_title")) {
-                MobileElement el11 = (MobileElement) driver.findElementById("com.google.socratic:id/explainers_result_title");
-                res6 = el11.getText().toLowerCase();
-            }
-            if (isElementPresent("id","com.google.socratic:id/solution_view")) {
-                MobileElement el12 = (MobileElement) driver.findElementById("com.google.socratic:id/solution_view");
-                res7 = el12.getText().toLowerCase();
-            }
-
-            pass_rate = 0;
-                for (int i = 2; i < phrase.length; i++) {
-                    if (res1.contains(phrase[i]) || res2.contains(phrase[i]) || res3.contains(phrase[i]) || res4.contains(phrase[i]) || res5.contains(phrase[i]) || res6.contains(phrase[i]) || res7.contains(phrase[i])) {
-                        ++pass_rate;
+            for (String[] elem : elems) {
+                if (isElementPresent(elem[0], elem[1])) {
+                    if (elem[1] == "com.google.socratic:id/alertTitle") {
+                        MobileElement el8 = (MobileElement) driver.findElementById("android:id/button1");
+                        el8.click();
+                        res1 = "FAIL";
                     }
-                    else if (res1.startsWith(phrase[i]) || res2.startsWith(phrase[i]) || res3.startsWith(phrase[i]) || res4.startsWith(phrase[i]) || res5.startsWith(phrase[i]) || res6.startsWith(phrase[i]) || res7.startsWith(phrase[i])) {
-                        pass_rate += 2;
+                    MobileElement el15 = (MobileElement) driver.findElementById(elem[1]);
+                    res1 = el15.getText().toLowerCase();
+
+                    for (int i = 2; i < phrase.length; i++) {
+                        if (res1.contains(phrase[i]) || res2.contains(phrase[i]) || res3.contains(phrase[i]) || res4.contains(phrase[i]) || res5.contains(phrase[i]) || res6.contains(phrase[i]) || res7.contains(phrase[i])) {
+                            ++pass_rate;
+                        } else if (res1.startsWith(phrase[i]) || res2.startsWith(phrase[i]) || res3.startsWith(phrase[i]) || res4.startsWith(phrase[i]) || res5.startsWith(phrase[i]) || res6.startsWith(phrase[i]) || res7.startsWith(phrase[i])) {
+                            pass_rate += 2;
+                        }
+                    }
+                    if (phrase[0].toLowerCase().contains(res1) || phrase[0].toLowerCase().contains(res2) || phrase[0].toLowerCase().contains(res3.substring(0, res3.length() - 1)) || phrase[0].toLowerCase().contains(res4.substring(0, res4.length() - 1)) || phrase[0].toLowerCase().contains(res5.substring(0, res5.length() - 1)) || phrase[0].toLowerCase().contains(res6) || phrase[0].toLowerCase().contains(res7)) {
+                        pass_rate = phrase.length;
                     }
                 }
-                if (phrase[0].toLowerCase().contains(res1) || phrase[0].toLowerCase().contains(res2) || phrase[0].toLowerCase().contains(res3.substring(0,res3.length()-1)) || phrase[0].toLowerCase().contains(res4.substring(0,res4.length()-1)) || phrase[0].toLowerCase().contains(res5.substring(0,res5.length()-1)) || phrase[0].toLowerCase().contains(res6) || phrase[0].toLowerCase().contains(res7) ){
-                    pass_rate = phrase.length;
-                }
-                double avg = pass_rate / phrase.length;
-                if (pass_rate >= 1) {
+            }
 
-//                    System.out.println("PASS");
-                    ++pass_count;
-                    if (chapterPass.containsKey(phrase[1])) {
-                        chapterPass.put(phrase[1], chapterPass.get(phrase[1]) + 1);
-                    }
-                    else {
-                        chapterPass.put(phrase[1], 1);
-                    }
 
+            if (pass_rate >= 1) {
+
+                System.out.println("PASS");
+                ++pass_count;
+                if (chapterPass.containsKey(phrase[1])) {
+                    chapterPass.put(phrase[1], chapterPass.get(phrase[1]) + 1);
                 } else {
-//                    System.out.println("TEST FAILED");
+                    chapterPass.put(phrase[1], 1);
                 }
+
+            } else {
+                System.out.println("TEST FAILED");
+            }
 
             Thread.sleep(1500);
             touchAction.tap(point(77, 154)).perform();
             Thread.sleep(1500);
 
-            }
+        }
         System.out.println(chapterPass);
-        double overall_pass_rate = pass_count/num_test_cases;
+        double overall_pass_rate = pass_count / num_test_cases;
         System.out.println(overall_pass_rate);
         HashMap<String, Double> passByChapter = new HashMap<>();
         for (HashMap.Entry<String, Integer> entry : chapterCount.entrySet()) {
             double total = entry.getValue();
             double divider = chapterPass.get(entry.getKey());
-            passByChapter.put(entry.getKey(), divider/total);
+            passByChapter.put(entry.getKey(), divider / total);
         }
         System.out.println(passByChapter);
     }
@@ -184,23 +162,21 @@ public class SampleTest {
     public void tearDown() {
         driver.quit();
     }
-protected boolean isElementPresent(String type, String by) {
 
-    try {
-        if (type == "id"){
+    protected boolean isElementPresent(String type, String by) {
+
+        try {
+
             driver.findElementById(by);
+
+
+            return true;
+
+        } catch (NoSuchElementException e) {
+
+            return false;
+
         }
-        if (type == "xpath"){
-            driver.findElementByXPath(by);
-        }
-
-        return true;
-
-    } catch (NoSuchElementException e) {
-
-        return false;
-
     }
-}
 }
 
