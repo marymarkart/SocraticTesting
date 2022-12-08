@@ -95,9 +95,9 @@ public class SampleTest {
             touchAction.tap(point(986, 2059)).perform();
             Thread.sleep(1500);
 
-            String res1 = "none";
-
+            pass_rate = 0;
             for (String[] elem : elems) {
+                String res1 = "none";
                 if (isElementPresent(elem[0], elem[1])) {
                     if (elem[1] == "com.google.socratic:id/alertTitle") {
                         MobileElement el8 = (MobileElement) driver.findElementById("android:id/button1");
@@ -106,15 +106,17 @@ public class SampleTest {
                     }
                     MobileElement el15 = (MobileElement) driver.findElementById(elem[1]);
                     res1 = el15.getText().toLowerCase();
+                    if (res1.equals("")) {
+                        res1 = "none";
+                    }
+                    res1 = res1.substring(0, res1.length() - 1);
 
                     for (int i = 2; i < phrase.length; i++) {
-                        if (res1.contains(phrase[i]) ) {
+                        if (res1.contains(phrase[i]) || res1.startsWith(phrase[i]) || phrase[i].contains(res1.substring(0, res1.length() - 2))) {
                             ++pass_rate;
-                        } else if (res1.startsWith(phrase[i])) {
-                            pass_rate += 2;
                         }
                     }
-                    if (phrase[0].toLowerCase().contains(res1)) {
+                    if (phrase[0].toLowerCase().contains(res1.substring(0, res1.length() - 2))) {
                         pass_rate = phrase.length;
                     }
                 }
@@ -161,8 +163,11 @@ public class SampleTest {
 
         try {
 
-            driver.findElementById(by);
-
+            if (type.equals("id")) {
+                driver.findElementById(by);
+            } else if (type.equals("xpath")) {
+                driver.findElementByXPath(by);
+            }
 
             return true;
 
