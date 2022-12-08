@@ -33,7 +33,7 @@ public class SampleTest {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         desiredCapabilities.setCapability("platformName", "Android");
         desiredCapabilities.setCapability("appium:platformVersion", "13");
-        desiredCapabilities.setCapability("appium:deviceName", "Pixel 4");
+        desiredCapabilities.setCapability("appium:deviceName", "Pixel-4");
         desiredCapabilities.setCapability("appium:appPackage", "com.google.socratic");
         desiredCapabilities.setCapability("appium:appActivity", "com.google.android.apps.education.bloom.app.home.HomeActivity");
         desiredCapabilities.setCapability("appium:noReset", true);
@@ -67,6 +67,12 @@ public class SampleTest {
         }
         s.close();
 
+        if (isElementPresent("id", "com.google.socratic:id/later_button")) {
+            MobileElement el5 = (MobileElement) driver.findElementById("com.google.socratic:id/later_button");
+            el5.click();
+            Thread.sleep(1500);
+        }
+
         MobileElement el1 = (MobileElement) driver.findElementByAccessibilityId("Type a question");
         el1.click();
         double num_test_cases = list.size();
@@ -81,11 +87,13 @@ public class SampleTest {
             }
             Thread.sleep(1500);
             if (!isElementPresent("id", "com.google.socratic:id/text_query")) {
-                driver.launchApp();
-                Thread.sleep(1500);
-                MobileElement el13 = (MobileElement) driver.findElementByAccessibilityId("Type a question");
-                el13.click();
-                Thread.sleep(1500);
+                while (!isElementPresent("id", "com.google.socratic:id/text_query")) {
+                    driver.launchApp();
+                    Thread.sleep(1500);
+                    MobileElement el13 = (MobileElement) driver.findElementByAccessibilityId("Type a question");
+                    el13.click();
+                    Thread.sleep(1500);
+                }
             }
 
             MobileElement el2 = (MobileElement) driver.findElementById("com.google.socratic:id/text_query");
