@@ -33,7 +33,7 @@ public class SampleTest {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
         desiredCapabilities.setCapability("platformName", "Android");
         desiredCapabilities.setCapability("appium:platformVersion", "13");
-        desiredCapabilities.setCapability("appium:deviceName", "Pixel-4");
+        desiredCapabilities.setCapability("appium:deviceName", "Pixel 4");
         desiredCapabilities.setCapability("appium:appPackage", "com.google.socratic");
         desiredCapabilities.setCapability("appium:appActivity", "com.google.android.apps.education.bloom.app.home.HomeActivity");
         desiredCapabilities.setCapability("appium:noReset", true);
@@ -79,6 +79,11 @@ public class SampleTest {
         double pass_count = 0.0;
 
         for (int j = 0; j < list.size(); j++) {
+            if (isElementPresent("id", "com.google.socratic:id/later_button")) {
+                MobileElement el5 = (MobileElement) driver.findElementById("com.google.socratic:id/later_button");
+                el5.click();
+                Thread.sleep(1500);
+            }
             String[] phrase = list.get(j).split(":");
             if (chapterCount.containsKey(phrase[1])) {
                 chapterCount.put(phrase[1], chapterCount.get(phrase[1]) + 1);
@@ -117,14 +122,17 @@ public class SampleTest {
                     if (res1.equals("")) {
                         res1 = "none";
                     }
-                    res1 = res1.substring(0, res1.length() - 1);
+//                    res1 = res1.substring(0, res1.length() - 1);
 
                     for (int i = 2; i < phrase.length; i++) {
-                        if (res1.contains(phrase[i]) || res1.startsWith(phrase[i]) || phrase[i].contains(res1.substring(0, res1.length() - 2))) {
+                        if (res1.length() > 2){
+                            res1 = res1.substring(0, res1.length() - 2);
+                        }
+                        if (res1.contains(phrase[i]) || res1.startsWith(phrase[i]) || phrase[i].contains(res1)) {
                             ++pass_rate;
                         }
                     }
-                    if (phrase[0].toLowerCase().contains(res1.substring(0, res1.length() - 2))) {
+                    if (phrase[0].toLowerCase().contains(res1)) {
                         pass_rate = phrase.length;
                     }
                 }
@@ -153,6 +161,7 @@ public class SampleTest {
         System.out.println(chapterPass);
         double overall_pass_rate = pass_count / num_test_cases;
         System.out.println(overall_pass_rate);
+        System.out.println();
         HashMap<String, Double> passByChapter = new HashMap<>();
         for (HashMap.Entry<String, Integer> entry : chapterCount.entrySet()) {
             double total = entry.getValue();
